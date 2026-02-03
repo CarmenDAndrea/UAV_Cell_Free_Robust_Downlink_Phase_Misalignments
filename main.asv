@@ -1,0 +1,98 @@
+clear; clc; tic
+%=========================================================================%
+%% Input parametes
+%=========================================================================%
+% Choose the access point (AP) selection strategy utilized to associate the
+% user-equipment (UE) with a subset of APs.
+APselectionMethod = 'APselectionBook'; % Options: 'CanonicalCF', 'UCC', 'LSFB', 'ScalableCF', 'matchedDecision', 'MD_LSFB', 'APselectionBook', 'StrongestAPs'
+
+% Choose if the system will reduce inter-CPU coordination
+% ReduceInterCPUcoordination = 'NoReducing'; % Options: 'NoReducing', 'ProprosedMethod', 'Hybrid_UCC_NCC'
+
+% Choose the AP cluster size control strategy
+APclusterSizeControl = 'Cmax_Full_CPUs'; % 'Cmax_Full_CPUs'
+
+% Set phase misalignment
+phaseMisalignments = 'Yes'; % 'Yes', 'No';
+
+% Set the number of APs (L) and UEs (K) in the coverage area
+nbrOfAPs = 10;
+nbrOfUEs = 5;
+
+% Set the number of antenna elements per AP (N)
+N = 1;
+
+% Set the maximum number of UEs that each AP can serve
+U_max = 4;
+
+% Maximum number of APs per user
+C_max = 4;
+
+% Set the modulation order
+M = 8;
+
+% Set the number of monte-Carlo setups and channel realizations
+nbrOfSetups = 1; nbrOfRealizations = 15;
+
+% Set the number of samples per coherence block and for pilot signaling
+tau_c = 200000; tau_p = 10;
+
+% Transmission power of uplink (UL) and downlink (DL)
+poweUL_mW = 100; PowerDL_mW = 200;
+
+% Propagation model parameters
+% BW_Hz = 100e6; % Bandwidth in Hz
+BW_Hz = 20e6; % Bandwidth in Hz
+fc_GHz = 3.5; % Frequency center in GHz
+
+% noiseFigure_dB = 8; % Noise figure (in dB) (from Fedex 05)
+noiseFigure_dB = 8; % Noise figure (in dB) (from Fedex 05)
+
+%%
+%=========================================================================%
+% Processing
+%=========================================================================%
+% Preparing to store results
+% MF_PreparingToStoreResults
+
+% Processing capacity limitation, in the access points (APs)
+U_max = min(U_max, tau_p); % If tau_p < U_max, we set U_max to be equal to tau_p
+
+% Bits
+modulationType = 'psk'; % Options: 'psk', 'qam'
+bitMap = generateBitMap(M, modulationType);
+
+% Generate constellation and amicable matrices
+GenerateConstellation
+
+BER_tot = cell(nbrOfSetups, 1);
+
+% Go through all setups
+for nSetup = 1:nbrOfSetups
+
+    % Display simulation progress
+    disp(['Setup ' num2str(nSetup) ' out of ' num2str(nbrOfSetups)]);
+
+    % Places the APs and UEs in the coverage area. Then, it calculates the
+    % large-scale fading and computes the channel covariance matrix
+    MF_APs_and_UEs_Positioning_and_ChannelCovarianceEstimation
+
+    % Performs AP clustering and channel estimation
+    MF_APselection_ReducinInterCPUcoordination_ChannelEstimation
+
+    % Computes the spectral efficiency (SE) and bit error rate (BER)
+    MF_Compute_CC_SE_EE_APsperUE_and_UEsperAP
+
+    BER_tot{nSetup} = BER;
+
+    clear SER BER
+
+    A = 0;
+
+end
+
+% Plot the achieved results
+% MF_PlotAndSaveResults
+
+toc
+
