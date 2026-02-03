@@ -1,0 +1,3 @@
+This Matlab code was produced by Marx M. M. Freitas and refers to the following publication: M. M. M. Freitas, S. Buzzi and G. Interdonato, "UAV-Empowered Aerial Cell-Free Networks Robust to Downlink Phase Misalignments," 2025 IEEE 26th International Workshop on Signal Processing and Artificial Intelligence for Wireless Communications (SPAWC), Surrey, United Kingdom, 2025, pp. 1-5, doi: 10.1109/SPAWC66079.2025.11143305.
+
+This code was produced in the framework of the Progetti di Ricerca di INteresse Nazionale (PRIN) 2022 Project titled “INSPIRE: Integrated Terrestrial/Space Wireless Networks for Broadband Connectivity and IoT Services” funded by the Italian Ministry of Universities and Research (MUR) under Grant 2022BEXMXN_01.
